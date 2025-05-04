@@ -1,0 +1,33 @@
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Cdr {
+  cust_id    Int
+  id         String
+  seq        Int
+  added_dt   DateTime @default(now())
+  start_time DateTime
+  end_time   DateTime
+  caller_id  String?
+
+  @@id([cust_id, id, seq])
+  @@index([cust_id])
+  @@index([seq])
+  @@index([start_time])
+  @@map("cdrs")
+}
+
+model Log {
+  id        Int      @id @default(autoincrement())
+  level     String
+  message   String
+  createdAt DateTime @default(now())
+
+  @@map("logs")
+}
