@@ -49,7 +49,7 @@ export const getSummary: RequestHandler = async (req, res) => {
 };
 
 /**
- * GET /logs?limit=N
+ * GET /logs?page=X&page_size=Y
  */
 export const getActivityLogs: RequestHandler = async (req, res) => {
   try {

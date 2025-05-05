@@ -47,7 +47,7 @@ app.use(
   }),
 );
 
-// mount your CDR routes
+// mount CDR routes
 app.use(API_ROOT, cdrRoutes);
 
 // docs endpoint
