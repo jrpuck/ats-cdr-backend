@@ -13,14 +13,20 @@ export default class CdrService {
    * Return daily counts via raw SQL (tagged template).
    */
   static async getSummary(custId: number) {
-    const rows = await prisma.$queryRaw<{ day: Date; count: bigint }[]>`
-      SELECT DATE(start_time) AS day, COUNT(*) AS count
-      FROM cdrs
-      WHERE cust_id = ${custId}
-      GROUP BY day
-      ORDER BY day ASC;
-    `;
-    return rows.map((r) => ({ day: r.day, count: Number(r.count) }));
+    const all = await prisma.cdr.findMany({
+      where: { cust_id: custId },
+      select: { start_time: true }
+    });
+  
+    const counts = all.reduce<Record<string, number>>((acc, { start_time }) => {
+      const day = start_time.toISOString().slice(0, 10);
+      acc[day] = (acc[day] || 0) + 1;
+      return acc;
+    }, {});
+  
+    return Object.entries(counts)
+      .map(([day, count]) => ({ day: new Date(day), count }))
+      .sort((a, b) => a.day.getTime() - b.day.getTime());
   }
 
   /**
